@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('document_number')->unique();
+            $table->enum('document_type', ['CPF', 'CNPJ']);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['COMMON_USER', 'SHOPKEEPER'])->default('COMMON_USER');
             $table->rememberToken();
             $table->timestamps();
         });
