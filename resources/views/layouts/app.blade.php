@@ -33,4 +33,45 @@
             </main>
         </div>
     </body>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
+    <script src="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/js/plugins/perfect-scrollbar.min.js" async></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/Loopple/loopple-public-assets@main/soft-ui-dashboard-tailwind/js/soft-ui-dashboard-tailwind.js" async></script>
+    <script src="./assets/js/loopple/loopple.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-maskmoney@3.0.2/dist/jquery.maskMoney.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('#currency').maskMoney();
+        });
+
+        function toggleModal(modalID) {
+            document.getElementById(modalID).classList.toggle("hidden");
+            document.getElementById(modalID + "-backdrop").classList.toggle("hidden");
+            document.getElementById(modalID).classList.toggle("flex");
+            document.getElementById(modalID + "-backdrop").classList.toggle("flex");
+
+            if (modalID == 'modal-transaction') {
+                newTransactionModal();
+            } else if (modalID == 'modal-details') {
+                transactionDetail();
+            }
+        }
+
+        function closeModal(modalID) {
+            $("input[type=text], select"). val("");
+            document.getElementById(modalID).classList.toggle("hidden");
+            document.getElementById(modalID + "-backdrop").classList.toggle("hidden");
+            document.getElementById(modalID).classList.toggle("flex");
+            document.getElementById(modalID + "-backdrop").classList.toggle("flex");
+        }
+
+        function newTransactionModal() {
+
+        }
+
+        function transactionDetail() {
+
+        }
+    </script>
 </html>
