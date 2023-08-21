@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Interfaces\TransactionRepositoryInterface;
+use App\Interfaces\WalletRepositoryInterface;
+use App\Services\WalletApi;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    private WalletRepositoryInterface $walletRepo;
+    private TransactionRepositoryInterface $transactionRepo;
+
+    public function __construct(WalletRepositoryInterface $walletRepo,
+                                TransactionRepositoryInterface $transactionRepo) {
+        $this->walletRepo = $walletRepo;
+        $this->transactionRepo = $transactionRepo;
+    }
+
     public function index() {
-        $totalBalance = 0;
+        $wallets = $this->walletRepo->getAllWalletsByUser(Auth::id());
+        $transactions = $this->transactionRepo->getTransactions(Auth::id());
+        $totalBalance = $wallets->sum('amount');
 
-        $wallets = [];
-        $transactions = [];
-
-        return view('dashboard');
+        return view('dashboard', compact('wallets', 'transactions', 'totalBalance'));
     }
 }

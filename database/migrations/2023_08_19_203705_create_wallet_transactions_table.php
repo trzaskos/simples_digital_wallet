@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id_from');
-            $table->unsignedBigInteger('user_id_to');
+            $table->unsignedBigInteger('payer');
+            $table->unsignedBigInteger('payee');
             $table->unsignedBigInteger('wallet_id');
             $table->decimal('amount', 9);
             $table->string('description')->nullable();
             $table->enum('type', ['SEND', 'RECEIVE']);
-            $table->enum('status', ['SUCCESS', 'FAIL']);
+            $table->enum('status', ['SUCCESS', 'FAIL'])->nullable();
             $table->string('status_message')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id_from')->references('id')->on('users');
-            $table->foreign('user_id_to')->references('id')->on('users');
+            $table->foreign('payer')->references('id')->on('users');
+            $table->foreign('payee')->references('id')->on('users');
             $table->foreign('wallet_id')->references('id')->on('wallet');
         });
     }

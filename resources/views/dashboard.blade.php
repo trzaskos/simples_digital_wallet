@@ -15,7 +15,7 @@
                             <div class="flex-none w-2/3 max-w-full px-3">
                                 <div>
                                     <p class="mb-0 font-sans font-semibold leading-normal text-sm">{{ __('Saldo Total') }}</p>
-                                    <h5 class="mb-0 font-bold"> R$ 0,00
+                                    <h5 class="mb-0 font-bold"> R$ {{ number_format($totalBalance, 2) }}
                                     </h5>
                                 </div>
                             </div>
@@ -33,17 +33,19 @@
 
                 <!-- Carteiras -->
                 <div class="flex flex-wrap -mx-3 removable">
+                    @foreach($wallets as $wallet)
                     <div class="w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
                         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-4">
                             <div class="flex-auto p-4">
                                 <div class="flex flex-row -mx-3">
                                     <div class="flex-none w-2/3 max-w-full px-3">
                                         <div>
-                                            <p class="mb-0 font-sans font-semibold leading-normal text-sm">Carteira 1</p>
-                                            <h5 class="mb-0 font-bold"> R$ 0,00
+                                            <p class="mb-0 font-sans font-semibold leading-normal text-sm">{{ $wallet->name }}</p>
+                                            <h5 class="mb-0 font-bold"> R$ {{ number_format($wallet->amount, 2) }}
                                             </h5>
                                         </div>
                                     </div>
+                                    @if (!Auth::user()->isShopkeeper())
                                     <div class="px-3 text-right basis-1/3">
                                         <button type="button" onclick="toggleModal('modal-transaction')" title="Nova Transação" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
                                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" height="1.5em" fill="currentColor" viewBox="0 0 512 512">
@@ -51,10 +53,12 @@
                                             </svg>
                                         </button>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @endforeach
                 </div>
 
                 <!-- Transações de todas as carteiras ordenadas por data da transação -->
@@ -75,42 +79,33 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                @foreach($transactions as $transaction)
                                 <tr>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
                                             <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 leading-normal text-sm">John Michael</h6>
-                                                <p class="mb-0 leading-tight text-xs text-slate-400">john@creative-tim.com</p>
+                                                <h6 class="mb-0 leading-normal text-sm">
+                                                    @if ($transaction->type == 'SEND')
+                                                        {{ $transaction->recipient->name }}
+                                                    @else
+                                                        {{ $transaction->sender->name }}
+                                                    @endif
+                                                </h6>
+                                                <p class="mb-0 leading-tight text-xs text-slate-400">
+                                                    @if ($transaction->type == 'SEND')
+                                                        {{ $transaction->recipient->email }}
+                                                    @else
+                                                        {{ $transaction->sender->email }}
+                                                    @endif
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent text-sm">
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ __('Envio') }}</span>
+                                        <span class=" {{ $transaction->type === 'SEND' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }} text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ __($transaction->type) }}</span>
                                     </td>
                                     <td class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
-                                        <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ __('Sucesso') }}</span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="font-semibold leading-tight text-xs text-slate-400">23/04/18</span>
-                                    </td>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <a href="javascript:toggleModal('modal-details');" class="font-semibold leading-tight text-xs text-slate-400"> {{ __('Detalhes') }} </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <div class="flex px-2 py-1">
-                                            <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 leading-normal text-sm">Alexa Liras</h6>
-                                                <p class="mb-0 leading-tight text-xs text-slate-400">alexa@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent text-sm">
-                                        <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ __('Recebido') }}</span>
-                                    </td>
-                                    <td class="p-2 leading-normal text-center align-middle bg-transparent border-b text-sm whitespace-nowrap shadow-transparent">
-                                        <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{{ __('Falha') }}</span>
+                                        <span class="{{ $transaction->status === 'FAIL' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }} text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{{ __($transaction->status) }}</span>
                                     </td>
                                     <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <span class="font-semibold leading-tight text-xs text-slate-400">11/01/19</span>
@@ -119,6 +114,7 @@
                                         <a href="javascript:;" class="font-semibold leading-tight text-xs text-slate-400"> {{ __('Detalhes') }} </a>
                                     </td>
                                 </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>

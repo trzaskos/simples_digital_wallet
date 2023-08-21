@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Transaction extends Model
 {
@@ -12,8 +14,8 @@ class Transaction extends Model
     protected $table = 'wallet_transactions';
 
     protected $fillable = [
-        'user_id_from',
-        'user_id_to',
+        'payer',
+        'payee',
         'wallet_id',
         'amount',
         'description',
@@ -21,4 +23,14 @@ class Transaction extends Model
         'status',
         'status_message'
     ];
+
+    public function sender(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'payer');
+    }
+
+    public function recipient(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'payee');
+    }
 }
