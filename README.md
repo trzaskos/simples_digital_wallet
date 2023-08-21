@@ -1,70 +1,117 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Simple Wallet
 
-## About Laravel
+This is a simple money wallet project.
+The main idea is to carry out transactions between user wallets.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Users can be of two types: common_user or shopkeeper.
+Only ordinary users can send and receive money. The shopkeeper type user can only receive but not send.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+After cloning the repository, run the following commands:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+  cp .env.example .env
+```
+Configure your database data in the .env file.
 
-## Laravel Sponsors
+Installation of required packages:
+```bash
+  composer install
+  npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Here we will use Sail for the environment:
+```bash
+  ./vendor/bin/sail up -d
+```
 
-### Premium Partners
+Database:
+```bash
+  ./vendor/bin/sail php artisan migrate
+```
+## API Reference
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+#### Create a new user
 
-## Contributing
+```http
+  POST /api/user
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Body:
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `string` | **Required** |
+| `email` | `string` | **Required** and unique |
+| `document_number` | `string` | **Required** and unique |
+| `document_type` | `string` | **Required** CPF/CNPJ |
+| `password` | `string` | **Required** |
+| `role` | `string` | **Required** COMMON_USER/SHOPKEEPER |
 
-## Code of Conduct
+A `token` will be returned for the created user. Store it, as it will be used in all other requests.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+In the APIs below, all must have the following header:
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `Accept`      | `string` | application/json |
+| `Authorization`      | `string` | Token generated at user creation |
 
-## Security Vulnerabilities
+#### Get all registered users except the one belonging to the entered ID
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```http
+  GET /users/{id}
+```
 
-## License
+#### Create a new wallet for a user
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# simples_digital_wallet
->>>>>>> 99fc4200ffb222ef27995a1310de877dc0aeb623
+```http
+  POST /wallet
+```
+
+Body:
+```json
+{
+    "name": "Wallet Name",
+    "user_id": 1,
+    "amount": "2300.00"
+}
+```
+
+#### Get all user wallets
+
+```http
+  GET /wallets/{id}
+```
+
+#### Get a specific wallet
+
+```http
+  GET /wallet/{id}
+```
+
+#### Get a user's transactions
+
+```http
+  GET /transactions/{id}
+```
+
+#### Send money to another user
+
+```http
+  POST /send
+```
+
+Body:
+```json
+{
+    "payer": 1,
+    "payee": 2,
+    "wallet_id": 1,
+    "amount": "200.00",
+    "description": "transaction description test"
+}
+```
